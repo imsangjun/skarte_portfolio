@@ -172,6 +172,8 @@ ul{list-style:none}
   pointer-events:none;
 }
 .video-bg iframe{width:100%;height:100%;border:0}
+/* 모바일: 풀스크린 sticky 겹침 대신 조금 낮은 일반 섹션으로 */
+@media(max-width:860px){.video-section{position:relative;height:82svh}.video-section.ws .ghost{font-size:clamp(40px,16vmin,150px)}}
 
 /* 영상이 없을 때의 플레이스홀더 (실제 배포 시 iframe으로 교체) */
 .video-ph{
@@ -246,7 +248,7 @@ ul{list-style:none}
 
 /* ===== 카테고리 섹션 구분 강화 ===== */
 .video-section.ws{border-top:1px solid rgba(255,255,255,.16)}
-.video-section.ws .ghost{position:absolute;top:9vh;right:6vw;z-index:4;font-size:min(34vmin,300px);font-weight:800;line-height:1;letter-spacing:.06em;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.45);text-stroke:2px rgba(255,255,255,.45);pointer-events:none;user-select:none}
+.video-section.ws .ghost{position:absolute;top:9vh;right:6vw;z-index:4;font-size:clamp(48px,20vmin,260px);font-weight:800;line-height:1;letter-spacing:.06em;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.45);text-stroke:2px rgba(255,255,255,.45);pointer-events:none;user-select:none}
 .video-section.ws.alt .ghost{right:auto;left:6vw}
 .video-section.ws .dim{background:linear-gradient(25deg,rgba(0,0,0,.8) 0%,rgba(0,0,0,.28) 50%,rgba(0,0,0,.4) 100%)}
 .video-section.ws.alt .dim{background:linear-gradient(-25deg,rgba(0,0,0,.8) 0%,rgba(0,0,0,.28) 50%,rgba(0,0,0,.4) 100%)}
