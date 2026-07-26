@@ -11,7 +11,9 @@ window.SKARTE_SUPABASE = {
   url:  "https://qgblqeftvegolvospsyv.supabase.co",
   anon: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnYmxxZWZ0dmVnb2x2b3Nwc3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0MDM0MDYsImV4cCI6MjA5Njk3OTQwNn0.mKHwmIae1mtKfM9W5ct1GYpnPi0GRNaR4Q5JWgYcH8E",
   // works 데이터를 저장하는 site_data 테이블의 key
-  worksKey: "works"
+  worksKey: "works",
+  // 사진 파일이 올라가는 Storage 버킷 이름 (schema.sql 에서 생성)
+  bucket: "photos"
 };
 
 /* ---------------------------------------------------------------------
@@ -128,6 +130,57 @@ window.SKARTE_SUPABASE = {
       if (!r.ok) return null;
       return await r.json(); // { id, email, ... }
     } catch (e) { return null; }
+  };
+
+  /* ===================================================================
+     Storage — 사진 파일 업로드/삭제 (관리자 전용, 로그인 토큰 필요)
+     버킷은 public 이라 읽기는 URL 만으로 가능. 쓰기는 RLS 로 막혀 있음.
+     =================================================================== */
+
+  // 저장된 경로 → 공개 URL
+  CFG.photoUrl = function (path) {
+    return CFG.url + "/storage/v1/object/public/" + CFG.bucket + "/" +
+           String(path || "").replace(/^\/+/, "");
+  };
+
+  // Blob/File 업로드 → 공개 URL 반환
+  CFG.uploadPhoto = async function (blob, path, accessToken) {
+    if (!configured) throw new Error("Supabase 설정이 비어 있습니다.");
+    if (!accessToken) throw new Error("로그인이 필요합니다.");
+    var r = await fetch(CFG.url + "/storage/v1/object/" + CFG.bucket + "/" + path, {
+      method: "POST",
+      headers: {
+        apikey: CFG.anon,
+        Authorization: "Bearer " + accessToken,
+        "Content-Type": blob.type || "application/octet-stream",
+        "cache-control": "max-age=31536000",
+        "x-upsert": "true"
+      },
+      body: blob
+    });
+    if (!r.ok) {
+      var t = await r.text();
+      if (/bucket not found/i.test(t)) {
+        throw new Error("'" + CFG.bucket + "' 버킷이 없습니다. supabase/schema.sql 의 Storage 섹션을 SQL Editor 에서 실행하세요.");
+      }
+      if (r.status === 403 || /row-level security|violates/i.test(t)) {
+        throw new Error("업로드 권한이 없습니다. schema.sql 의 Storage 정책을 실행했는지 확인하세요.");
+      }
+      throw new Error("업로드 실패 (" + r.status + "): " + t);
+    }
+    return CFG.photoUrl(path);
+  };
+
+  // 저장소에서 파일 삭제 (실패해도 치명적이지 않음 → false 반환)
+  CFG.deletePhoto = async function (path, accessToken) {
+    if (!configured || !accessToken || !path) return false;
+    try {
+      var r = await fetch(CFG.url + "/storage/v1/object/" + CFG.bucket + "/" + path, {
+        method: "DELETE",
+        headers: { apikey: CFG.anon, Authorization: "Bearer " + accessToken }
+      });
+      return r.ok;
+    } catch (e) { return false; }
   };
 
   /* --- refresh_token 으로 세션 갱신 ----------------------------------

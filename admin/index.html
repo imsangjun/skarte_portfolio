@@ -105,6 +105,25 @@ main{max-width:1040px;margin:0 auto;padding:24px 24px 100px}
 
 .muted{color:var(--mut);font-size:13px}
 
+/* ===== 사진 갤러리 ===== */
+.dropzone{border:1px dashed rgba(255,255,255,.28);background:var(--panel3);padding:26px 18px;text-align:center;
+  cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:12px;display:block}
+.dropzone:hover,.dropzone.over{border-color:rgba(255,255,255,.65);background:#141414}
+.dropzone b{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.dropzone span{display:block;font-size:12px;color:var(--mut)}
+.uprog{font-size:12.5px;color:var(--mut);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.uprog .bar{flex:1;height:3px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}
+.uprog .bar i{position:absolute;inset:0 auto 0 0;background:#fff;width:0;transition:width .25s}
+.uprog .err{color:var(--warn)}
+.urlrow{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.urlrow input{flex:1;min-width:200px;font:inherit;font-size:13.5px;color:var(--tx);padding:9px 12px;
+  border:1px solid var(--line);background:var(--panel3);border-radius:0}
+.urlrow input:focus{outline:none;border-color:rgba(255,255,255,.5)}
+.vid .thumb.pt{aspect-ratio:4/3;background:#0a0a0a}
+.photo-badge{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);
+  border:1px solid var(--line);padding:3px 8px;flex:none}
+.pcount{color:var(--mut);font-size:12.5px;margin-left:auto}
+
 /* ===== Toast ===== */
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(8px);background:#fff;color:#000;
   padding:11px 22px;border-radius:0;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;font-size:14px;font-weight:600;letter-spacing:.02em;z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:90vw;text-align:center}
@@ -243,7 +262,8 @@ body.locked #gate{display:flex}
     <b>사용법</b> — 카테고리·영상을 편집한 뒤,<br>
     ① <b>☁ 클라우드 저장</b>: 변경 내용이 <b>모든 방문자에게 바로 공개 반영</b>됩니다 (재배포 불필요).<br>
     ② <b>미리보기 저장</b>: 이 브라우저에서만 임시로 확인 (공개 사이트는 그대로).<br>
-    <span class="muted">영상 ID는 유튜브 링크의 v= 뒤 또는 youtu.be/ 뒤 11자리입니다. 전체 링크를 붙여넣어도 자동으로 ID만 추출합니다.</span>
+    <span class="muted">영상 ID는 유튜브 링크의 v= 뒤 또는 youtu.be/ 뒤 11자리입니다. 전체 링크를 붙여넣어도 자동으로 ID만 추출합니다.</span><br>
+    <span class="muted"><b>사진</b> 탭에서는 파일을 끌어다 놓으면 바로 업로드됩니다. 업로드된 사진도 <b>☁ 클라우드 저장</b>을 눌러야 공개 사이트(/works/photo)에 나타납니다.</span>
   </div>
 
   <p class="eyebrow">메인 영상</p>
@@ -483,6 +503,14 @@ const DEFAULT_WORKS={
       "soon": true,
       "videos": [],
       "desc": "현장을 실시간으로 송출하는 라이브 중계. 안정적인 송출과 멀티캠 구성으로 생생함을 그대로 전합니다."
+    },
+    {
+      "key": "photo",
+      "title": "Photography",
+      "type": "photo",
+      "videos": [],
+      "photos": [],
+      "desc": "현장의 공기와 표정을 사진으로 남깁니다. 공연 스틸·프로필·행사 스케치까지, 영상과 같은 시선으로 촬영합니다."
     }
   ],
   "about": "skARTe Film(skartefilms)는 인천을 기반으로 활동하는 영상 제작사입니다. 공연·브랜드필름·광고·하이라이트·라이브 중계까지, 기획부터 촬영·편집·송출을 한 팀에서 책임집니다. 브랜드와 무대의 순간을 또렷한 영상으로 남깁니다."
@@ -512,19 +540,27 @@ function render(){
   const wrap=$('#cats'); wrap.innerHTML='';
   data.categories.forEach((c,ci)=>{
     const card=document.createElement('div'); card.className='card'; card.dataset.idx=ci;
-    const vcount=(c.videos||[]).length;
-    card.innerHTML=`
-      <div class="cat-head">
-        <span class="num">${String(ci+1).padStart(2,'0')}</span>
-        <input class="grow" data-k="title" placeholder="카테고리 이름" value="${(c.title||'').replace(/"/g,'&quot;')}">
-        <label class="chk"><input type="checkbox" data-k="soon" ${c.soon?'checked':''}> 업로드 예정(soon)</label>
-        <div class="head-tools">
-          <button class="icon" data-act="up" title="위로">↑</button>
-          <button class="icon" data-act="down" title="아래로">↓</button>
-          <button class="sm danger" data-act="delcat">삭제</button>
+    const isPhoto=c.type==='photo';
+    const vcount=isPhoto?(c.photos||[]).length:(c.videos||[]).length;
+    const body = isPhoto ? `
+        <div class="field">
+          <label>갤러리 소개문 (사진 페이지 상단·홈 캡션에 표시)</label>
+          <textarea data-k="desc" placeholder="이 갤러리에 대한 한두 문장 소개">${(c.desc||'').replace(/</g,'&lt;')}</textarea>
         </div>
-      </div>
-      <div class="cat-body">
+        <div class="vids-label">사진 목록 <span class="cnt">${vcount}</span>
+          <span class="pcount">업로드한 사진도 <b>☁ 클라우드 저장</b>을 눌러야 공개됩니다</span></div>
+        <div class="dropzone" data-act="drop" role="button" tabindex="0">
+          <b>사진을 여기로 끌어다 놓거나 클릭해서 선택</b>
+          <span>JPG · PNG · WEBP · 여러 장 한 번에 가능 — 자동으로 크기를 줄여 업로드합니다</span>
+        </div>
+        <input type="file" accept="image/*" multiple hidden data-act="file">
+        <div class="uprog" hidden><span class="msg"></span><span class="bar"><i></i></span></div>
+        <div class="urlrow">
+          <input data-act="urlinput" placeholder="또는 이미지 주소 붙여넣기 (https://... .jpg)">
+          <button class="sm" data-act="addurl">URL로 추가</button>
+        </div>
+        <div class="photos"></div>
+      ` : `
         <div class="field">
           <label>카테고리 소개문 (카테고리 페이지 상단·홈 캡션에 표시)</label>
           <textarea data-k="desc" placeholder="이 카테고리에 대한 한두 문장 소개">${(c.desc||'').replace(/</g,'&lt;')}</textarea>
@@ -532,7 +568,20 @@ function render(){
         <div class="vids-label">영상 목록 <span class="cnt">${vcount}</span></div>
         <div class="vids"></div>
         <button class="sm" data-act="addvid">+ 영상 추가</button>
+      `;
+    card.innerHTML=`
+      <div class="cat-head">
+        <span class="num">${String(ci+1).padStart(2,'0')}</span>
+        <input class="grow" data-k="title" placeholder="카테고리 이름" value="${(c.title||'').replace(/"/g,'&quot;')}">
+        ${isPhoto?'<span class="photo-badge">사진</span>':''}
+        <label class="chk"><input type="checkbox" data-k="soon" ${c.soon?'checked':''}> 업로드 예정(soon)</label>
+        <div class="head-tools">
+          <button class="icon" data-act="up" title="위로">↑</button>
+          <button class="icon" data-act="down" title="아래로">↓</button>
+          <button class="sm danger" data-act="delcat">삭제</button>
+        </div>
       </div>
+      <div class="cat-body">${body}</div>
     `;
     // 카테고리 필드
     card.querySelector('[data-k="title"]').addEventListener('input',e=>{c.title=e.target.value;});
@@ -540,7 +589,13 @@ function render(){
     card.querySelector('[data-k="desc"]').addEventListener('input',e=>{ c.desc=e.target.value; });
     card.querySelector('[data-act="up"]').onclick=()=>{ if(ci>0){[data.categories[ci-1],data.categories[ci]]=[data.categories[ci],data.categories[ci-1]];render();} };
     card.querySelector('[data-act="down"]').onclick=()=>{ if(ci<data.categories.length-1){[data.categories[ci+1],data.categories[ci]]=[data.categories[ci],data.categories[ci+1]];render();} };
-    card.querySelector('[data-act="delcat"]').onclick=()=>{ if(confirm('이 카테고리를 삭제할까요?')){ data.categories.splice(ci,1); render(); } };
+    card.querySelector('[data-act="delcat"]').onclick=()=>{
+      const msg=isPhoto?'사진 갤러리를 통째로 삭제할까요?\n(저장소에 올라간 이미지 파일은 남습니다)':'이 카테고리를 삭제할까요?';
+      if(confirm(msg)){ data.categories.splice(ci,1); render(); }
+    };
+    // 카테고리명 입력 시 탭 라벨도 갱신
+    card.querySelector('[data-k="title"]').addEventListener('input',e=>{ const t=document.querySelector('.cat-tab[data-idx="'+ci+'"] .tlabel'); if(t)t.textContent=e.target.value||'(이름 없음)'; });
+    if(isPhoto){ buildPhotoCard(card,c); wrap.appendChild(card); return; }
     card.querySelector('[data-act="addvid"]').onclick=()=>{ (c.videos=c.videos||[]).push({id:'',title:'',parts:''}); render(); };
 
     const vbox=card.querySelector('.vids');
@@ -575,26 +630,172 @@ function render(){
       row.querySelector('[data-act="vdel"]').onclick=()=>{ c.videos.splice(vi,1); render(); };
       vbox.appendChild(row);
     });
-    // 카테고리명 입력 시 탭 라벨도 갱신
-    card.querySelector('[data-k="title"]').addEventListener('input',e=>{ const t=document.querySelector('.cat-tab[data-idx="'+ci+'"] .tlabel'); if(t)t.textContent=e.target.value||'(이름 없음)'; });
     wrap.appendChild(card);
   });
   if(activeIdx>=data.categories.length) activeIdx=data.categories.length-1;
   if(activeIdx<0) activeIdx=0;
   buildTabs(); showActive();
 }
+/* ===================== 사진 갤러리 =====================
+   사진 '파일' 은 Supabase Storage(photos 버킷)로 바로 올라가고,
+   사진 '목록·제목' 은 works 데이터(c.photos)에 담긴다.
+   => 업로드 후에도 ☁ 클라우드 저장을 눌러야 공개 사이트에 반영된다. */
+const MAX_FULL=2400, MAX_THUMB=900;
+const attr=s=>(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+async function decodeImage(file){
+  if(window.createImageBitmap){
+    try{ return await createImageBitmap(file,{imageOrientation:'from-image'}); }catch(e){}
+  }
+  return await new Promise((res,rej)=>{
+    const img=new Image(), u=URL.createObjectURL(file);
+    img.onload=()=>{ URL.revokeObjectURL(u); res(img); };
+    img.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error('이미지 형식을 읽을 수 없습니다.')); };
+    img.src=u;
+  });
+}
+/* 긴 변 기준으로 축소해 JPEG blob 생성 (원본이 더 작으면 그대로) */
+function shrink(img,max,quality){
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
+  const s=Math.min(1,max/Math.max(iw,ih));
+  const w=Math.max(1,Math.round(iw*s)), h=Math.max(1,Math.round(ih*s));
+  const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h);   // 투명 PNG 대비
+  ctx.drawImage(img,0,0,w,h);
+  return new Promise(res=>cv.toBlob(b=>res({blob:b,w:w,h:h}),'image/jpeg',quality));
+}
+const rid=()=>Math.random().toString(36).slice(2,8);
+
+async function uploadPhotos(cat,files,ui){
+  if(!SB || !SB.isConfigured()){ alert('Supabase가 설정되지 않았습니다.'); return; }
+  if(!authToken){ alert('로그인이 필요합니다.'); return; }
+  const list=Array.from(files).filter(f=>/^image\//.test(f.type||''));
+  if(!list.length){ alert('이미지 파일만 올릴 수 있습니다.'); return; }
+  cat.photos=cat.photos||[];
+  let ok=0, fail=0, lastErr='';
+  for(let i=0;i<list.length;i++){
+    const f=list[i];
+    ui.show(i,list.length,f.name);
+    try{
+      const img=await decodeImage(f);
+      const full=await shrink(img,MAX_FULL,.86);
+      const th  =await shrink(img,MAX_THUMB,.78);
+      if(img.close)img.close();
+      const base='p/'+new Date().toISOString().slice(0,10)+'-'+Date.now().toString(36)+'-'+rid();
+      const path=base+'.jpg', tpath=base+'-t.jpg';
+      const url=await SB.uploadPhoto(full.blob,path,authToken);
+      let turl=url, tp='';
+      try{ turl=await SB.uploadPhoto(th.blob,tpath,authToken); tp=tpath; }catch(e){}
+      const item={url:url,thumb:turl,path:path,title:f.name.replace(/\.[^.]+$/,''),parts:'',w:full.w,h:full.h};
+      if(tp)item.thumbPath=tp;
+      cat.photos.push(item);
+      ok++;
+    }catch(err){ fail++; lastErr=err.message||String(err); }
+  }
+  ui.hide(); render();
+  if(fail) alert(ok+'장 업로드 · '+fail+'장 실패\n\n'+lastErr);
+  else toast(ok+'장 업로드됨 — ☁ 클라우드 저장을 눌러야 공개됩니다');
+}
+
+function buildPhotoCard(card,c){
+  const fileIn=card.querySelector('[data-act="file"]');
+  const zone  =card.querySelector('[data-act="drop"]');
+  const prog  =card.querySelector('.uprog');
+  const ui={
+    show(i,n,name){
+      prog.hidden=false;
+      prog.querySelector('.msg').textContent='업로드 중 '+(i+1)+' / '+n+(name?' · '+name:'');
+      prog.querySelector('.bar i').style.width=Math.round(i/n*100)+'%';
+    },
+    hide(){ prog.hidden=true; }
+  };
+  zone.addEventListener('click',()=>fileIn.click());
+  zone.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fileIn.click(); } });
+  ['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{ e.preventDefault(); zone.classList.add('over'); }));
+  ['dragleave','dragend'].forEach(ev=>zone.addEventListener(ev,()=>zone.classList.remove('over')));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault(); zone.classList.remove('over');
+    if(e.dataTransfer && e.dataTransfer.files.length) uploadPhotos(c,e.dataTransfer.files,ui);
+  });
+  fileIn.addEventListener('change',e=>{
+    const fs=e.target.files; e.target.value='';
+    if(fs && fs.length) uploadPhotos(c,fs,ui);
+  });
+
+  // 외부 이미지 주소로 추가
+  const urlIn=card.querySelector('[data-act="urlinput"]');
+  const addUrl=()=>{
+    const u=urlIn.value.trim(); if(!u)return;
+    if(!/^https?:\/\//i.test(u)){ alert('http:// 또는 https:// 로 시작하는 이미지 주소를 넣어주세요.'); return; }
+    (c.photos=c.photos||[]).push({url:u,thumb:u,title:'',parts:''});
+    urlIn.value=''; render(); toast('추가됨 — ☁ 클라우드 저장 필요');
+  };
+  card.querySelector('[data-act="addurl"]').onclick=addUrl;
+  urlIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addUrl(); } });
+
+  // 사진 목록
+  const box=card.querySelector('.photos');
+  (c.photos||[]).forEach((p,pi)=>{
+    const row=document.createElement('div'); row.className='vid';
+    row.innerHTML=`
+      <div class="vid-top">
+        <div class="thumb-wrap">
+          <img class="thumb pt" src="${attr(p.thumb||p.url)}" alt="" loading="lazy">
+        </div>
+        <div class="vid-fields">
+          <div class="field full"><label>사진 제목</label><input data-pk="title" value="${attr(p.title)}" placeholder="예: 2025 OO 페스티벌 스틸"></div>
+          <div class="field"><label>설명 / 참여 파트</label><input data-pk="parts" value="${attr(p.parts)}" placeholder="예: 현장 스틸 · 보정"></div>
+          <div class="field"><label>촬영일 (선택 · YYYY-MM-DD)</label><input data-pk="date" value="${attr(p.date)}" placeholder="2025-06-01"></div>
+        </div>
+        <div class="vtools">
+          <button class="icon" data-act="pup" title="위로">↑</button>
+          <button class="icon" data-act="pdown" title="아래로">↓</button>
+          <button class="sm danger" data-act="pdel">삭제</button>
+        </div>
+      </div>`;
+    row.querySelector('[data-pk="title"]').addEventListener('input',e=>{ p.title=e.target.value; });
+    row.querySelector('[data-pk="parts"]').addEventListener('input',e=>{ p.parts=e.target.value; });
+    row.querySelector('[data-pk="date"]').addEventListener('input',e=>{ const d=e.target.value.trim(); if(d)p.date=d; else delete p.date; });
+    row.querySelector('[data-act="pup"]').onclick=()=>{ if(pi>0){ [c.photos[pi-1],c.photos[pi]]=[c.photos[pi],c.photos[pi-1]]; render(); } };
+    row.querySelector('[data-act="pdown"]').onclick=()=>{ if(pi<c.photos.length-1){ [c.photos[pi+1],c.photos[pi]]=[c.photos[pi],c.photos[pi+1]]; render(); } };
+    row.querySelector('[data-act="pdel"]').onclick=async()=>{
+      const stored=!!p.path;
+      if(!confirm(stored?'이 사진을 삭제할까요?\n저장소의 이미지 파일도 함께 지워집니다.':'이 사진을 목록에서 뺄까요?')) return;
+      const item=p;
+      c.photos.splice(pi,1); render();
+      if(stored && SB && authToken){
+        await SB.deletePhoto(item.path,authToken);
+        if(item.thumbPath) await SB.deletePhoto(item.thumbPath,authToken);
+      }
+      toast('삭제됨 — ☁ 클라우드 저장 필요');
+    };
+    box.appendChild(row);
+  });
+}
+
 let activeIdx=0;
 function buildTabs(){
   const t=$('#catTabs'); t.innerHTML='';
   data.categories.forEach((c,i)=>{
     const b=document.createElement('button'); b.className='cat-tab'+(i===activeIdx?' active':''); b.dataset.idx=i;
-    b.innerHTML='<span class="tnum">'+String(i+1).padStart(2,'0')+'</span><span class="tlabel">'+((c.title||'(이름 없음)')).replace(/</g,'&lt;')+'</span>'+(c.soon?' · soon':'');
+    b.innerHTML='<span class="tnum">'+String(i+1).padStart(2,'0')+'</span><span class="tlabel">'+((c.title||'(이름 없음)')).replace(/</g,'&lt;')+'</span>'+(c.type==='photo'?' · 사진':'')+(c.soon?' · soon':'');
     b.onclick=()=>{ activeIdx=i; buildTabs(); showActive(); window.scrollTo({top:0,behavior:'smooth'}); };
     t.appendChild(b);
   });
   const add=document.createElement('button'); add.className='cat-tab add'; add.textContent='+ 카테고리 추가';
   add.onclick=()=>{ const tt='새 카테고리'; data.categories.push({key:slug(tt)+'-'+Date.now().toString(36).slice(-3),title:tt,videos:[]}); activeIdx=data.categories.length-1; render(); };
   t.appendChild(add);
+  // 사진 갤러리는 하나만 — 없을 때만 추가 버튼 노출
+  if(!data.categories.some(c=>c.type==='photo')){
+    const ap=document.createElement('button'); ap.className='cat-tab add'; ap.textContent='+ 사진 갤러리 추가';
+    ap.onclick=()=>{
+      data.categories.push({key:'photo',title:'Photography',type:'photo',videos:[],photos:[],
+        desc:'현장의 공기와 표정을 사진으로 남깁니다.'});
+      activeIdx=data.categories.length-1; render();
+    };
+    t.appendChild(ap);
+  }
 }
 function showActive(){ document.querySelectorAll('#cats .card').forEach(card=>{ card.classList.toggle('show', +card.dataset.idx===activeIdx); }); }
 
@@ -606,6 +807,7 @@ function normalize(){
   data.categories.forEach(c=>{
     let k=c.key||slug(c.title); if(seen[k]) k=k+'-'+Date.now().toString(36).slice(-3); seen[k]=1; c.key=k;
     c.videos=(c.videos||[]).filter(v=>v.id);
+    if(c.type==='photo') c.photos=(c.photos||[]).filter(p=>p&&p.url);
   });
   data.hero=extractId(data.hero||'');
 }

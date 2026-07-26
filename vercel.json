@@ -21,6 +21,16 @@
       "source": "/works/live",
       "destination": "/works/live-broadcast",
       "permanent": true
+    },
+    {
+      "source": "/works/photos",
+      "destination": "/works/photo",
+      "permanent": true
+    },
+    {
+      "source": "/photos",
+      "destination": "/works/photo",
+      "permanent": true
     }
   ],
   "headers": [

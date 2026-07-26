@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advertisement — skARTe Film 영상 작업 | 영상 제작사</title>
-<meta name="description" content="제품과 브랜드의 메시지를 또렷하게 전하는 광고 영상. 기획·촬영·편집·모션그래픽을 한 팀에서 책임집니다.">
-<link rel="canonical" href="https://skarte.kr/works/advertisement">
+<title>Photography — skARTe Film 사진 작업 | 영상 제작사</title>
+<meta name="description" content="현장의 공기와 표정을 사진으로 남깁니다. 공연 스틸·프로필·행사 스케치까지, 영상과 같은 시선으로 촬영합니다.">
+<link rel="canonical" href="https://skarte.kr/works/photo">
 <meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="skARTe Film">
-<meta property="og:title" content="Advertisement — skARTe Film">
-<meta property="og:description" content="제품과 브랜드의 메시지를 또렷하게 전하는 광고 영상. 기획·촬영·편집·모션그래픽을 한 팀에서 책임집니다.">
-<meta property="og:url" content="https://skarte.kr/works/advertisement">
+<meta property="og:title" content="Photography — skARTe Film">
+<meta property="og:description" content="현장의 공기와 표정을 사진으로 남깁니다. 공연 스틸·프로필·행사 스케치까지, 영상과 같은 시선으로 촬영합니다.">
+<meta property="og:url" content="https://skarte.kr/works/photo">
 <meta property="og:image" content="https://skarte.kr/og-image.png?v=2">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
@@ -77,21 +77,47 @@ main{max-width:none;margin:0 auto;padding:54px 6vw 100px}
 .eyebrow{font-size:13px;letter-spacing:.34em;color:#8a8a8a;margin-bottom:10px}
 h1{font-size:clamp(24px,6vw,68px);font-weight:800;letter-spacing:.01em;margin-bottom:18px;overflow-wrap:break-word;word-break:break-word}
 .intro{max-width:680px;color:#bcbcbc;font-size:15.5px;margin-bottom:46px}
-.wc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));gap:20px}
-.work-item{display:flex;flex-direction:column}
-.vcard{position:relative;width:100%;aspect-ratio:16/9;background:#101010;border-radius:7px;overflow:hidden;cursor:pointer;display:block}
-.vcard img{width:100%;height:100%;object-fit:cover;opacity:.86;transition:transform .5s,opacity .3s}
-.vcard:hover img{transform:scale(1.04);opacity:1}
-.vcard .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;
-  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.75)}
-.vcard .play::after{content:"";position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);
-  border:9px solid transparent;border-left:15px solid #fff;border-right:0}
-.vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.wi-title{margin-top:13px;font-size:16px;font-weight:600}
-.wi-parts{margin-top:5px;font-size:13px;color:#9a9a9a}
 .soon{color:#888;letter-spacing:.2em;font-size:18px;padding:40px 0}
 footer{border-top:1px solid rgba(255,255,255,.1);padding:40px 6vw;color:#8a8a8a;font-size:13px;text-align:center}
 footer a{color:#cfcfcf}
+
+/* ===== 사진 그리드 (세로형·가로형 섞여도 자연스러운 masonry) ===== */
+.pg-grid{columns:3 300px;column-gap:16px}
+.pg-item{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 16px;display:block;width:100%;
+  background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:zoom-in}
+.pg-item .shot{position:relative;overflow:hidden;background:#0e0e0e;display:block}
+.pg-item img{width:100%;height:auto;display:block;opacity:.92;transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .3s}
+.pg-item:hover img{transform:scale(1.035);opacity:1}
+.pg-cap{display:block;margin-top:11px;font-size:15px;font-weight:600;line-height:1.35}
+.pg-parts{display:block;margin-top:4px;font-size:13px;color:#9a9a9a}
+@media(max-width:640px){.pg-grid{columns:1;column-gap:0}.pg-item{margin-bottom:22px}}
+
+/* ===== 라이트박스 ===== */
+#lb{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:64px 20px 84px}
+#lb.show{opacity:1;visibility:visible}
+#lb img{max-width:100%;max-height:calc(100vh - 220px);max-height:calc(100svh - 220px);
+  object-fit:contain;display:block;user-select:none}
+#lb figure{display:flex;flex-direction:column;align-items:center;gap:16px;max-width:100%}
+#lb figcaption{text-align:center;font-size:14px;color:#d2d2d2;line-height:1.5;flex:none}
+#lb figcaption span{display:block;font-size:12.5px;color:#8f8f8f;margin-top:3px}
+#lb button{position:absolute;background:none;border:1px solid rgba(255,255,255,.28);color:#fff;cursor:pointer;
+  font-family:inherit;line-height:1;transition:background .25s,border-color .25s}
+#lb button:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.6)}
+#lbClose{top:20px;right:20px;width:44px;height:44px;font-size:26px;font-weight:300}
+#lbPrev,#lbNext{top:50%;transform:translateY(-50%);width:48px;height:64px;font-size:30px;font-weight:300}
+#lbPrev{left:16px}
+#lbNext{right:16px}
+#lbCount{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);font-size:12px;letter-spacing:.24em;color:#8f8f8f}
+body.lb-open{overflow:hidden}
+@media(max-width:640px){
+  #lb{padding:56px 12px 76px}
+  #lb img{max-height:calc(100vh - 200px);max-height:calc(100svh - 200px)}
+  #lbPrev,#lbNext{top:auto;bottom:16px;transform:none;width:52px;height:44px;font-size:24px}
+  #lbPrev{left:calc(50% - 62px)}
+  #lbNext{right:calc(50% - 62px)}
+  #lbCount{bottom:74px}
+}
 </style>
 </head>
 <body>
@@ -111,20 +137,29 @@ footer a{color:#cfcfcf}
 <aside id="worksPanel" aria-hidden="true" aria-label="작업 카테고리">
   <div class="wp-head"><small><span class="brandname">skARTe Film</span> &mdash; Works</small><button id="wpClose" aria-label="닫기">&times;</button></div>
   <h2 class="wp-title"><span class="brandname">skARTe Film</span><br>Works</h2>
-  <nav class="wp-list" id="wpList"><a class="wp-row" href="/works/performance"><i>01</i><strong>Performance</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/film-drama"><i>02</i><strong>Film &amp; Drama</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row cur" href="/works/advertisement"><i>03</i><strong>Advertisement</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/highlight-video"><i>04</i><strong>Highlight Video</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/live-broadcast"><i>05</i><strong>Live Broadcast <em class="soon">soon</em></strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/><C:/Program Files/Git/svg></a><a class="wp-row" href="/works/photo"><i>06</i><strong>Photography</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a></nav>
-  
+  <nav class="wp-list" id="wpList"><a class="wp-row" href="/works/performance"><i>01</i><strong>Performance</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/film-drama"><i>02</i><strong>Film &amp; Drama</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/advertisement"><i>03</i><strong>Advertisement</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/highlight-video"><i>04</i><strong>Highlight Video</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row" href="/works/live-broadcast"><i>05</i><strong>Live Broadcast <em class="soon">soon</em></strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a><a class="wp-row cur" href="/works/photo"><i>06</i><strong>Photography</strong><svg class="arr" viewBox="0 0 24 24"><path d="M5 5 L19 19 M19 8 V19 H8"/></svg></a></nav>
 </aside>
 <main>
-  <p class="crumb"><a href="/">Home</a> &nbsp;/&nbsp; <a href="/#works">Works</a> &nbsp;/&nbsp; Advertisement</p>
+  <p class="crumb"><a href="/">Home</a> &nbsp;/&nbsp; <a href="/#works">Works</a> &nbsp;/&nbsp; Photography</p>
   <p class="eyebrow">WORKS</p>
-  <h1>Advertisement</h1>
-  <p class="intro">제품과 브랜드의 메시지를 또렷하게 전하는 광고 영상. 기획·촬영·편집·모션그래픽을 한 팀에서 책임집니다.</p>
-  <div class="wc-grid"><div class="work-item"><div class="vcard vthumb" data-id="fdv-0pa9wwA"><img src="https://i.ytimg.com/vi/fdv-0pa9wwA/hqdefault.jpg" alt="OO 브랜드 캠페인 광고 영상 썸네일" loading="lazy"><span class="play"></span></div><h3 class="wi-title">OO 브랜드 캠페인 광고</h3><p class="wi-parts">기획 · 촬영 · 편집</p></div><div class="work-item"><div class="vcard vthumb" data-id="xGnmC1ujFW0"><img src="https://i.ytimg.com/vi/xGnmC1ujFW0/hqdefault.jpg" alt="△△ 신제품 런칭 광고 영상 썸네일" loading="lazy"><span class="play"></span></div><h3 class="wi-title">△△ 신제품 런칭 광고</h3><p class="wi-parts">촬영 · 색보정</p></div><div class="work-item"><div class="vcard vthumb" data-id="nOU01K35SVc"><img src="https://i.ytimg.com/vi/nOU01K35SVc/hqdefault.jpg" alt="□□ 앱 프로모션 영상 영상 썸네일" loading="lazy"><span class="play"></span></div><h3 class="wi-title">□□ 앱 프로모션 영상</h3><p class="wi-parts">모션그래픽 · 편집</p></div><div class="work-item"><div class="vcard vthumb" data-id="nCoN0HPrR8Y"><img src="https://i.ytimg.com/vi/nCoN0HPrR8Y/hqdefault.jpg" alt="◇◇ 뷰티 브랜드 TVC 영상 썸네일" loading="lazy"><span class="play"></span></div><h3 class="wi-title">◇◇ 뷰티 브랜드 TVC</h3><p class="wi-parts">촬영 · 편집</p></div><div class="work-item"><div class="vcard vthumb" data-id="p3od_uTnYeA"><img src="https://i.ytimg.com/vi/p3od_uTnYeA/hqdefault.jpg" alt="☆☆ 식음료 브랜드 광고 영상 썸네일" loading="lazy"><span class="play"></span></div><h3 class="wi-title">☆☆ 식음료 브랜드 광고</h3><p class="wi-parts">기획 · 촬영</p></div><div class="work-item"><div class="vcard vthumb" data-id="SucKk5_LUms"><img src="https://i.ytimg.com/vi/SucKk5_LUms/hqdefault.jpg" alt="○○ 패션 룩북 필름 영상 썸네일" loading="lazy"><span class="play"></span></div><h3 class="wi-title">○○ 패션 룩북 필름</h3><p class="wi-parts">촬영 · 편집</p></div></div>
+  <h1>Photography</h1>
+  <p class="intro">현장의 공기와 표정을 사진으로 남깁니다. 공연 스틸·프로필·행사 스케치까지, 영상과 같은 시선으로 촬영합니다.</p>
+  <p class="soon">업로드 예정입니다.</p>
 </main>
 <footer>
   <p>skARTe Film · skartefilms — 인천광역시 연수구 먼우금로 194 728호 · <a href="mailto:skartefilm@naver.com">skartefilm@naver.com</a></p>
   <p>© skARTe Film 2026</p>
 </footer>
+
+<!-- 사진 확대 보기 -->
+<div id="lb" aria-hidden="true" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+  <button id="lbClose" aria-label="닫기">&times;</button>
+  <button id="lbPrev" aria-label="이전 사진">&lsaquo;</button>
+  <button id="lbNext" aria-label="다음 사진">&rsaquo;</button>
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <p id="lbCount"></p>
+</div>
+
 <script>
 var wp=document.getElementById('worksPanel'),pd=document.getElementById('panelDim'),wl=document.getElementById('worksLink'),wc=document.getElementById('wpClose');
 function openP(){wp.classList.add('show');pd.classList.add('show');wp.setAttribute('aria-hidden','false');}
@@ -132,30 +167,63 @@ function closeP(){wp.classList.remove('show');pd.classList.remove('show');wp.set
 if(wl)wl.addEventListener('click',function(e){e.preventDefault();openP();});
 if(pd)pd.addEventListener('click',closeP);
 if(wc)wc.addEventListener('click',closeP);
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeP();});
 var ham=document.getElementById('ham'),menu=document.getElementById('menu');
 if(ham&&menu){ham.addEventListener('click',function(){menu.classList.toggle('open');});Array.prototype.forEach.call(menu.querySelectorAll('a'),function(a){a.addEventListener('click',function(){menu.classList.remove('open');});});}
-document.querySelectorAll('.vthumb').forEach(function(v){
-  v.addEventListener('click',function(){
-    if(v.classList.contains('on'))return; v.classList.add('on');
-    v.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+v.dataset.id+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-  });
-});
 </script>
 <script src="/supabase.js"></script>
 <script>
-/* 라이브 works 동기화 — admin(Supabase)에서 편집한 최신본을 이 정적 페이지에도 반영.
-   불러오기 실패 시 위의 정적 HTML을 그대로 유지(오프라인/SEO 폴백). */
+/* 사진 갤러리 — works 데이터의 type:"photo" 카테고리를 읽어 그린다.
+   파일 자체는 Supabase Storage 에 있고, 여기서는 URL만 받아 표시한다.
+   불러오기 실패 시 위의 정적 HTML(업로드 예정)을 그대로 유지. */
 (function(){
-  var KEY="advertisement";
+  var KEY="photo";
+  var PHOTOS=[];
   var esc=function(s){return (s||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});};
   var pad2=function(n){return String(n).padStart(2,'0');};
-  function bindPlay(v){ if(!v)return;
-    v.addEventListener('click',function(){
-      if(v.classList.contains('on'))return; v.classList.add('on');
-      v.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+v.dataset.id+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+
+  /* ---- 라이트박스 ---- */
+  var lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg'),
+      lbCap=document.getElementById('lbCap'), lbCount=document.getElementById('lbCount');
+  var cur=-1;
+  function show(i){
+    if(!PHOTOS.length)return;
+    cur=(i+PHOTOS.length)%PHOTOS.length;
+    var p=PHOTOS[cur];
+    lbImg.src=p.url; lbImg.alt=p.title||'skARTe Film 사진 작업';
+    lbCap.innerHTML=(p.title?esc(p.title):'')+(p.parts?'<span>'+esc(p.parts)+'</span>':'');
+    lbCount.textContent=pad2(cur+1)+' / '+pad2(PHOTOS.length);
+    lb.classList.add('show'); lb.setAttribute('aria-hidden','false');
+    document.body.classList.add('lb-open');
+    // 앞뒤 사진 미리 받아두기
+    [1,-1].forEach(function(d){
+      var n=PHOTOS[(cur+d+PHOTOS.length)%PHOTOS.length]; if(n){ var im=new Image(); im.src=n.url; }
     });
   }
+  function hide(){
+    lb.classList.remove('show'); lb.setAttribute('aria-hidden','true');
+    document.body.classList.remove('lb-open'); lbImg.removeAttribute('src'); cur=-1;
+  }
+  document.getElementById('lbClose').addEventListener('click',hide);
+  document.getElementById('lbPrev').addEventListener('click',function(e){e.stopPropagation();show(cur-1);});
+  document.getElementById('lbNext').addEventListener('click',function(e){e.stopPropagation();show(cur+1);});
+  lb.addEventListener('click',function(e){ if(e.target===lb||e.target.tagName==='FIGURE')hide(); });
+  document.addEventListener('keydown',function(e){
+    if(lb.classList.contains('show')){
+      if(e.key==='Escape')hide();
+      else if(e.key==='ArrowRight')show(cur+1);
+      else if(e.key==='ArrowLeft')show(cur-1);
+      return;
+    }
+    if(e.key==='Escape')closeP();
+  });
+  // 모바일 스와이프
+  var sx=0,sy=0;
+  lb.addEventListener('touchstart',function(e){ sx=e.changedTouches[0].clientX; sy=e.changedTouches[0].clientY; },{passive:true});
+  lb.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) show(cur+(dx<0?1:-1));
+  },{passive:true});
+
   function renderPanel(cats){
     var list=document.querySelector('.wp-list'); if(!list)return; list.innerHTML='';
     cats.forEach(function(c,i){
@@ -171,27 +239,45 @@ document.querySelectorAll('.vthumb').forEach(function(v){
     var crumb=main.querySelector('.crumb');
     if(crumb)crumb.innerHTML='<a href="/">Home</a> &nbsp;/&nbsp; <a href="/#works">Works</a> &nbsp;/&nbsp; '+esc(cat.title);
     var intro=main.querySelector('.intro'); if(intro&&cat.desc)intro.textContent=cat.desc;
-    var old; while((old=main.querySelector('.wc-grid')))old.remove();
+    var old; while((old=main.querySelector('.pg-grid')))old.remove();
     Array.prototype.slice.call(main.querySelectorAll('p.soon')).forEach(function(p){ if(p.parentNode===main)p.remove(); });
-    var vids=(cat.videos||[]).filter(function(v){return v&&v.id;});
-    if(cat.soon||!vids.length){
+
+    PHOTOS=(cat.photos||[]).filter(function(p){return p&&p.url;});
+    if(cat.soon||!PHOTOS.length){
       var s=document.createElement('p'); s.className='soon'; s.textContent='업로드 예정입니다.'; main.appendChild(s); return;
     }
-    var grid=document.createElement('div'); grid.className='wc-grid';
-    vids.forEach(function(v){
-      var it=document.createElement('div'); it.className='work-item';
-      it.innerHTML='<div class="vcard vthumb" data-id="'+esc(v.id)+'"><img src="https://i.ytimg.com/vi/'+esc(v.id)
-        +'/hqdefault.jpg" alt="'+esc(v.title||cat.title)+' 영상 썸네일" loading="lazy"><span class="play"></span></div>'
-        +(v.title?'<h3 class="wi-title">'+esc(v.title)+'</h3>':'')
-        +(v.parts?'<p class="wi-parts">'+esc(v.parts).replace(/\n/g,'<br>')+'</p>':'');
-      grid.appendChild(it); bindPlay(it.querySelector('.vthumb'));
+    var grid=document.createElement('div'); grid.className='pg-grid';
+    PHOTOS.forEach(function(p,i){
+      var b=document.createElement('button'); b.type='button'; b.className='pg-item';
+      b.setAttribute('aria-label',(p.title||'사진')+' 크게 보기');
+      var ratio=(p.w&&p.h)?' style="aspect-ratio:'+p.w+'/'+p.h+'"':'';
+      b.innerHTML='<span class="shot"'+ratio+'><img src="'+esc(p.thumb||p.url)+'" alt="'+esc(p.title||cat.title)
+        +' 사진" loading="lazy" decoding="async"></span>'
+        +(p.title?'<span class="pg-cap">'+esc(p.title)+'</span>':'')
+        +(p.parts?'<span class="pg-parts">'+esc(p.parts)+'</span>':'');
+      b.addEventListener('click',function(){ show(i); });
+      grid.appendChild(b);
     });
     main.appendChild(grid);
+    addSchema(cat);
+  }
+  function addSchema(cat){
+    var old=document.getElementById('photoLd'); if(old)old.remove();
+    if(!PHOTOS.length)return;
+    var s=document.createElement('script'); s.type='application/ld+json'; s.id='photoLd';
+    s.textContent=JSON.stringify(PHOTOS.slice(0,30).map(function(p){
+      return {"@context":"https://schema.org","@type":"ImageObject",
+        "contentUrl":p.url,"thumbnailUrl":p.thumb||p.url,
+        "name":p.title||cat.title,"description":p.parts||cat.desc||'',
+        "creator":{"@type":"Organization","name":"skARTe Film"}};
+    }));
+    document.body.appendChild(s);
   }
   function apply(data){
     if(!data||!data.categories)return false;
-    var cat=data.categories.find(function(c){return c.key===KEY;});
+    var cat=data.categories.find(function(c){return c.key===KEY||c.type==='photo';});
     if(!cat)return false;
+    KEY=cat.key;
     renderPanel(data.categories); renderMain(cat); return true;
   }
   (async function(){
@@ -203,7 +289,6 @@ document.querySelectorAll('.vthumb').forEach(function(v){
   })();
 })();
 </script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skarte.kr/"}, {"@type": "ListItem", "position": 2, "name": "Works", "item": "https://skarte.kr/#works"}, {"@type": "ListItem", "position": 3, "name": "Advertisement", "item": "https://skarte.kr/works/advertisement"}]}</script>
-<script type="application/ld+json">[{"@type": "VideoObject", "name": "OO 브랜드 캠페인 광고", "description": "기획 · 촬영 · 편집", "thumbnailUrl": ["https://i.ytimg.com/vi/fdv-0pa9wwA/hqdefault.jpg"], "embedUrl": "https://www.youtube.com/embed/fdv-0pa9wwA", "contentUrl": "https://youtu.be/fdv-0pa9wwA", "publisher": {"@type": "Organization", "name": "skARTe Film", "logo": {"@type": "ImageObject", "url": "https://skarte.kr/icon-512.png"}}}, {"@type": "VideoObject", "name": "△△ 신제품 런칭 광고", "description": "촬영 · 색보정", "thumbnailUrl": ["https://i.ytimg.com/vi/xGnmC1ujFW0/hqdefault.jpg"], "embedUrl": "https://www.youtube.com/embed/xGnmC1ujFW0", "contentUrl": "https://youtu.be/xGnmC1ujFW0", "publisher": {"@type": "Organization", "name": "skARTe Film", "logo": {"@type": "ImageObject", "url": "https://skarte.kr/icon-512.png"}}}, {"@type": "VideoObject", "name": "□□ 앱 프로모션 영상", "description": "모션그래픽 · 편집", "thumbnailUrl": ["https://i.ytimg.com/vi/nOU01K35SVc/hqdefault.jpg"], "embedUrl": "https://www.youtube.com/embed/nOU01K35SVc", "contentUrl": "https://youtu.be/nOU01K35SVc", "publisher": {"@type": "Organization", "name": "skARTe Film", "logo": {"@type": "ImageObject", "url": "https://skarte.kr/icon-512.png"}}}, {"@type": "VideoObject", "name": "◇◇ 뷰티 브랜드 TVC", "description": "촬영 · 편집", "thumbnailUrl": ["https://i.ytimg.com/vi/nCoN0HPrR8Y/hqdefault.jpg"], "embedUrl": "https://www.youtube.com/embed/nCoN0HPrR8Y", "contentUrl": "https://youtu.be/nCoN0HPrR8Y", "publisher": {"@type": "Organization", "name": "skARTe Film", "logo": {"@type": "ImageObject", "url": "https://skarte.kr/icon-512.png"}}}, {"@type": "VideoObject", "name": "☆☆ 식음료 브랜드 광고", "description": "기획 · 촬영", "thumbnailUrl": ["https://i.ytimg.com/vi/p3od_uTnYeA/hqdefault.jpg"], "embedUrl": "https://www.youtube.com/embed/p3od_uTnYeA", "contentUrl": "https://youtu.be/p3od_uTnYeA", "publisher": {"@type": "Organization", "name": "skARTe Film", "logo": {"@type": "ImageObject", "url": "https://skarte.kr/icon-512.png"}}}, {"@type": "VideoObject", "name": "○○ 패션 룩북 필름", "description": "촬영 · 편집", "thumbnailUrl": ["https://i.ytimg.com/vi/SucKk5_LUms/hqdefault.jpg"], "embedUrl": "https://www.youtube.com/embed/SucKk5_LUms", "contentUrl": "https://youtu.be/SucKk5_LUms", "publisher": {"@type": "Organization", "name": "skARTe Film", "logo": {"@type": "ImageObject", "url": "https://skarte.kr/icon-512.png"}}}]</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://skarte.kr/"}, {"@type": "ListItem", "position": 2, "name": "Works", "item": "https://skarte.kr/#works"}, {"@type": "ListItem", "position": 3, "name": "Photography", "item": "https://skarte.kr/works/photo"}]}</script>
 </body>
 </html>

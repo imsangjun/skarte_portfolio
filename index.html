@@ -18,11 +18,11 @@ try{ if(sessionStorage.getItem('skarte_intro_seen')) document.documentElement.cl
 <meta property="og:description" content="공연·브랜드필름·광고·하이라이트 영상 제작. skARTe Film(skartefilms).">
 <meta property="og:url" content="https://skarte.kr/">
 <meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://skarte.kr/og-image.png">
+<meta property="og:image" content="https://skarte.kr/og-image.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
-<meta name="twitter:image" content="https://skarte.kr/og-image.png">
+<meta name="twitter:image" content="https://skarte.kr/og-image.png?v=2">
 <link rel="preload" href="/fonts/Paperlogy-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/Paperlogy-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -193,6 +193,12 @@ ul{list-style:none}
 .video-ph::after{
   content:"";position:absolute;inset:0;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.022) 3px 4px);
+}
+/* 사진 카테고리 섹션의 대표 이미지 배경 */
+.photo-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  transform:scale(1.04);
 }
 .dim{position:absolute;inset:0;background:rgba(0,0,0,.42)}
 
@@ -547,7 +553,7 @@ html.intro-seen #intro{display:none!important;animation:none!important}
 
 <!-- ===== ABOUT (회사 소개) ===== -->
 <div id="worksStack"></div>
-<noscript><section style="padding:80px 6vw;color:#fff"><h2>Performance</h2><h2>Film &amp; Drama</h2><h2>Advertisement</h2><h2>Highlight Video</h2><h2>Live Broadcast</h2><p>skARTe Film(skartefilms)는 인천 연수구 기반 영상 제작사로 공연·브랜드필름·광고·하이라이트·라이브 중계 영상을 제작합니다. 문의: skartefilm@naver.com</p></section></noscript>
+<noscript><section style="padding:80px 6vw;color:#fff"><h2>Performance</h2><h2>Film &amp; Drama</h2><h2>Advertisement</h2><h2>Highlight Video</h2><h2>Live Broadcast</h2><h2>Photography</h2><p>skARTe Film(skartefilms)는 인천 연수구 기반 영상 제작사로 공연·브랜드필름·광고·하이라이트·라이브 중계 영상을 제작합니다. 문의: skartefilm@naver.com</p></section></noscript>
 
 <!-- ===== WORKS 서브페이지 (카테고리 전체 영상) ===== -->
 <div id="subpage" aria-hidden="true">
@@ -745,6 +751,14 @@ const DEFAULT_WORKS = {
       "soon": true,
       "videos": [],
       "desc": "현장을 실시간으로 송출하는 라이브 중계. 안정적인 송출과 멀티캠 구성으로 생생함을 그대로 전합니다."
+    },
+    {
+      "key": "photo",
+      "title": "Photography",
+      "type": "photo",
+      "videos": [],
+      "photos": [],
+      "desc": "현장의 공기와 표정을 사진으로 남깁니다. 공연 스틸·프로필·행사 스케치까지, 영상과 같은 시선으로 촬영합니다."
     }
   ],
   "about": "skARTe Film(skartefilms)는 인천을 기반으로 활동하는 영상 제작사입니다. 공연·브랜드필름·광고·하이라이트·라이브 중계까지, 기획부터 촬영·편집·송출을 한 팀에서 책임집니다. 브랜드와 무대의 순간을 또렷한 영상으로 남깁니다."
@@ -772,10 +786,14 @@ function buildStack(){
   const stack=document.getElementById('worksStack'); stack.innerHTML='';
   WORKS.categories.forEach((c,i)=>{
     const num=pad2(i+1), alt=(i%2===1)?' alt':'';
-    const rep=(c.videos&&c.videos[0])?c.videos[0].id:null;
-    const media=(c.soon||!rep)
+    const isPhoto=c.type==='photo';
+    const shot=isPhoto&&c.photos&&c.photos[0]?(c.photos[0].url||c.photos[0].thumb):null;
+    const rep=(!isPhoto&&c.videos&&c.videos[0])?c.videos[0].id:null;
+    const media=(c.soon||(isPhoto?!shot:!rep))
       ? '<div class="video-ph" style="animation-duration:16s;animation-delay:-6s"></div>'
-      : '<div class="video-bg"><iframe data-src="'+bgUrl(rep)+'" title="'+esc(c.title)+' 대표영상" allow="autoplay; encrypted-media"></iframe></div>';
+      : isPhoto
+        ? '<div class="photo-bg" style="background-image:url(\''+esc(shot)+'\')" role="img" aria-label="'+esc(c.title)+' 대표 사진"></div>'
+        : '<div class="video-bg"><iframe data-src="'+bgUrl(rep)+'" title="'+esc(c.title)+' 대표영상" allow="autoplay; encrypted-media"></iframe></div>';
     const cta=c.soon ? '<p class="soon-note">업로드 예정</p>'
                      : '<a class="view-all" href="/works/'+c.key+'">전체 보기 &rarr;</a>';
     const sec=document.createElement('section'); sec.className='video-section ws'+alt; sec.id='w-'+c.key;
@@ -796,6 +814,8 @@ function bindPlay(item){
   });
 }
 const findCat = key => WORKS.categories.find(c=>c.key===key);
+/* 사진 카테고리는 이 페이지의 오버레이 대신 전용 페이지(/works/photo)로 이동시킨다 */
+const findSubCat = key => { const c=findCat(key); return (c && c.type!=='photo') ? c : null; };
 
 const openSub = key => {
   const w=findCat(key); if(!w) return;
@@ -823,18 +843,18 @@ const openPath = key => { closePanel(); openSub(key); history.pushState({k:key},
 document.addEventListener('click', e=>{
   const a=e.target.closest('a[href^="/works/"]'); if(!a) return;
   const m=a.getAttribute('href').match(/^\/works\/([A-Za-z0-9_-]+)\/?$/);
-  if(m && findCat(m[1])){ e.preventDefault(); openPath(m[1]); }
+  if(m && findSubCat(m[1])){ e.preventDefault(); openPath(m[1]); }
 });
 window.addEventListener('popstate', ()=>{
   const m=location.pathname.match(/^\/works\/([A-Za-z0-9_-]+)\/?$/);
-  if(m && findCat(m[1])) openSub(m[1]); else closeSub();
+  if(m && findSubCat(m[1])) openSub(m[1]); else closeSub();
 });
 document.getElementById('spBack').addEventListener('click', ()=>{ history.pushState(null,'','/'); closeSub(); });
 const route = () => {
   const m=location.pathname.match(/^\/works\/([A-Za-z0-9_-]+)\/?$/);
-  if(m && findCat(m[1])){ closePanel(); openSub(m[1]); return; }
+  if(m && findSubCat(m[1])){ closePanel(); openSub(m[1]); return; }
   const h=location.hash.match(/^#works\/([A-Za-z0-9_-]+)$/);
-  if(h && findCat(h[1])){ closePanel(); openSub(h[1]); } else closeSub();
+  if(h && findSubCat(h[1])){ closePanel(); openSub(h[1]); } else closeSub();
 };
 
 const ioBg = new IntersectionObserver(es => es.forEach(e=>{
@@ -869,7 +889,7 @@ loadWorks().then(()=>{ buildPanel(); buildStack(); setHero(); observeVideos(); r
   "description":"인천 기반 영상 제작사. 공연·브랜드필름·광고·하이라이트·라이브 중계 영상 제작.",
   "url":"https://skarte.kr/",
   "logo":"https://skarte.kr/icon-512.png",
-  "image":"https://skarte.kr/og-image.png",
+  "image":"https://skarte.kr/og-image.png?v=2",
   "email":"skartefilm@naver.com",
   "address":{"@type":"PostalAddress","streetAddress":"먼우금로 194 728호","addressLocality":"연수구","addressRegion":"인천광역시","addressCountry":"KR"},
   "areaServed":"KR",

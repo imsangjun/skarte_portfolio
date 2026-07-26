@@ -68,6 +68,46 @@ create policy "authenticated write site_data"
 -- ============================================================
 
 -- ============================================================
+-- Storage — 사진 업로드용 'photos' 버킷
+-- ------------------------------------------------------------
+-- /admin 의 사진 갤러리에서 업로드한 이미지 파일이 여기에 저장됩니다.
+-- (works 의 사진 '목록·제목' 은 위 site_data 에, 실제 '파일' 은 여기에)
+-- 이 블록도 SQL Editor 에서 한 번 실행하세요.
+-- ============================================================
+
+-- 1) 버킷 생성 (public = 누구나 이미지 URL 로 볼 수 있음)
+insert into storage.buckets (id, name, public)
+values ('photos', 'photos', true)
+on conflict (id) do update set public = true;
+
+-- 2) 읽기: 누구나 (공개 사이트가 이미지를 표시해야 하므로)
+drop policy if exists "public read photos" on storage.objects;
+create policy "public read photos"
+  on storage.objects for select
+  using (bucket_id = 'photos');
+
+-- 3) 업로드/수정/삭제: 로그인한 관리자만
+drop policy if exists "authenticated upload photos" on storage.objects;
+create policy "authenticated upload photos"
+  on storage.objects for insert to authenticated
+  with check (bucket_id = 'photos');
+
+drop policy if exists "authenticated update photos" on storage.objects;
+create policy "authenticated update photos"
+  on storage.objects for update to authenticated
+  using (bucket_id = 'photos')
+  with check (bucket_id = 'photos');
+
+drop policy if exists "authenticated delete photos" on storage.objects;
+create policy "authenticated delete photos"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'photos');
+
+-- 위 policy 문에서 권한 오류(must be owner of table objects)가 나면,
+-- 대시보드 > Storage > New bucket 으로 'photos' 를 Public 으로 만든 뒤
+-- 버킷의 Policies 탭에서 같은 내용을 추가하면 됩니다.
+
+-- ============================================================
 -- 참고:
 --  - anon(공개) 키로는 읽기만 됩니다. 안전합니다.
 --  - 관리자 저장은 Supabase Auth 로그인 후 authenticated 키로 동작합니다.
