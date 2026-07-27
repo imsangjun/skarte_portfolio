@@ -320,8 +320,9 @@ ul{list-style:none}
 }
 .contact .info{font-size:13.5px;letter-spacing:.14em;line-height:2.3;color:#ccc}
 .sns{
-  display:flex;justify-content:center;gap:70px;margin:80px 0 90px;
+  display:flex;justify-content:center;flex-wrap:wrap;gap:70px;margin:80px 0 90px;
 }
+@media(max-width:520px){.sns{gap:26px 34px;margin:60px 0 70px}}
 .sns a{
   font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:#ddd;
   position:relative;padding-bottom:6px;
@@ -579,6 +580,7 @@ html.intro-seen #intro{display:none!important;animation:none!important}
   </p>
   <div class="sns">
     <a href="https://instagram.com/skartefilm" target="_blank" rel="noopener">Instagram</a>
+    <a href="http://pf.kakao.com/_uqxdxhX/chat" target="_blank" rel="noopener">KakaoTalk</a>
   </div>
   <p class="copyright">Copyright © <span class="brandname">skARTe Film</span> 2026. All rights reserved.</p>
 </section>
